@@ -1,41 +1,27 @@
-const mongoose = require('mongoose');
-const beUnique = require('mongoose-unique-validation');
-const bcrypt = require('bcryptjs');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose'),
+  passportLocal = require('passport-local-mongoose');
+const { Schema } = mongoose;
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-const UserSchema = new Schema({
+const User = new Schema({
   username: {
     type: String,
     required: true,
-    maxlength: 25,
-    unique: 'That username already has an account.'
+    maxlength: 25
   },
   email: {
     type: String,
     required: true,
     maxlength: 50,
-    match: emailRegex,
-    unique: 'That email already has an account.'
-  },
-  password: { type: String, required: true, minlength: 4, select: false }
+    match: emailRegex
+  }
 });
 
 // Virtual for user's URL
-UserSchema.virtual('url').get(function () {
+User.virtual('url').get(function () {
   return '/user/' + this._id;
 });
 
-// Hash password before adding to database
-UserSchema.pre('save', function (next) {
-  const user = this;
-  bcrypt.hash(user.password, 10, function (err, hash) {
-    if (err) return next(err);
-    user.password = hash;
-    next();
-  });
-});
+User.plugin(passportLocal);
 
-UserSchema.plugin(beUnique);
-
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', User);

@@ -1,39 +1,31 @@
-const express = require('express');
-const createError = require('http-errors');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const cors = require('cors');
-const mongoose = require('mongoose');
+const express = require('express'),
+  mongoose = require('mongoose'),
+  passport = require('passport'),
+  createError = require('http-errors'),
+  cookieParser = require('cookie-parser'),
+  session = require('express-session'),
+  logger = require('morgan'),
+  path = require('path'),
+  cors = require('cors'),
+  User = require('./models/user');
+const MongoStore = require('connect-mongo')(session);
+
+const homeRouter = require('./routes/home'),
+  usersRouter = require('./routes/users'),
+  moviesRouter = require('./routes/movies'),
+  showsRouter = require('./routes/shows'),
+  personsRouter = require('./routes/persons');
 
 const PORT = 4000;
 const app = express();
 
-const homeRouter = require('./routes/home');
-const usersRouter = require('./routes/users');
-const moviesRouter = require('./routes/movies');
-const showsRouter = require('./routes/shows');
-const personsRouter = require('./routes/persons');
-
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'pug');
-
-app.use(cors());
-app.use(logger('dev'));
-app.use(express.json());
-app.use(cookieParser());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', homeRouter);
-app.use('/user', usersRouter);
-app.use('/movie', moviesRouter);
-app.use('/show', showsRouter);
-app.use('/person', personsRouter);
 
 //Set up default mongoose connection
 const mongoDB =
   'mongodb+srv://admin:admin@movieusers-c4ykc.gcp.mongodb.net/movieshow_users?retryWrites=true&w=majority';
+
 mongoose.connect(mongoDB, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -49,6 +41,38 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', function () {
   console.log('MongoDB database connection established successfully');
 });
+
+app.use(cors());
+app.use(logger('dev'));
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: false }));
+app.use(
+  session({
+    secret: 'secret',
+    saveUninitialized: false,
+    resave: false,
+    store: new MongoStore({
+      mongooseConnection: db,
+      touchAfter: 1800
+    })
+  })
+);
+
+// Passport configuration
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use('/', homeRouter);
+app.use('/user', usersRouter);
+app.use('/movie', moviesRouter);
+app.use('/show', showsRouter);
+app.use('/person', personsRouter);
 
 /*
  ** Catch 404 and forward to error handler
@@ -76,5 +100,3 @@ app.listen(PORT, function () {
 });
 
 module.exports = app;
-
-// mongodb+srv://admin:<password>@movieusers-c4ykc.gcp.mongodb.net/movieshow_users?retryWrites=true&w=majority

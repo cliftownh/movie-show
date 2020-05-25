@@ -1,6 +1,7 @@
-const User = require('../models/user');
-const mongoose = require('mongoose');
-const createError = require('http-errors');
+const mongoose = require('mongoose'),
+  createError = require('http-errors'),
+  User = require('../models/user'),
+  passport = require('passport');
 
 exports.user_list = (req, res, next) => {
   User.find()
@@ -31,19 +32,46 @@ exports.user_detail = (req, res, next) => {
 exports.user_signup = (req, res, next) => {
   const user = new User({
     username: req.body.username,
-    email: req.body.email,
-    password: req.body.password
+    email: req.body.email
   });
-  User.create(user, (err, user) => {
-    if (err) {
-      return next(err.errors.username || err.errors.email || err);
-    }
+
+  User.register(user, req.body.password, (err, user) => {
+    if (err) return next(err);
+
     res.status(201).json({
       user: {
         id: user._id,
         username: user.username,
         email: user.email
-      }
+      },
+      message: 'Your account has been created!'
     });
   });
+};
+
+exports.user_login = (req, res) => {
+  if (!req.body.username) {
+    res.status(422).json({ message: 'No username was given' });
+  } else if (!req.body.password) {
+    res.status(422).json({ message: 'No password was given' });
+  } else {
+    passport.authenticate('local', (err, user, info) => {
+      if (err) {
+        console.log(err);
+        return res.status(401).json(err);
+      }
+
+      if (user) {
+        res.redirect('/');
+      } else {
+        console.log(info);
+        return res.status(401).json(info);
+      }
+    })(req, res);
+  }
+};
+
+exports.user_logout = (req, res) => {
+  req.logout();
+  res.redirect('/');
 };
