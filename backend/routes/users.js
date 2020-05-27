@@ -14,6 +14,10 @@ router.post('/login', user_controller.user_login);
 // Log in existing user
 router.get('/logout', user_controller.user_logout);
 
+/* Test route to check if user is logged in
+router.get('/loggedin', user_controller.loggedIn);
+*/
+
 // Get one user's details
 router.get('/:id', user_controller.user_detail);
 

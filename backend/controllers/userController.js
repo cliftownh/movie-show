@@ -49,29 +49,46 @@ exports.user_signup = (req, res, next) => {
   });
 };
 
-exports.user_login = (req, res) => {
+exports.user_login = (req, res, next) => {
+  if (req.user) return res.json({ message: 'You are already logged in' });
+
   if (!req.body.username) {
     res.status(422).json({ message: 'No username was given' });
   } else if (!req.body.password) {
     res.status(422).json({ message: 'No password was given' });
   } else {
     passport.authenticate('local', (err, user, info) => {
-      if (err) {
-        console.log(err);
-        return res.status(401).json(err);
-      }
+      if (err) return next(err);
 
-      if (user) {
-        res.redirect('/');
-      } else {
-        console.log(info);
-        return res.status(401).json(info);
-      }
-    })(req, res);
+      if (!user) return next(info);
+
+      req.logIn(user, err => {
+        if (err) return next(err);
+
+        return res.redirect('/');
+      });
+    })(req, res, next);
   }
 };
 
 exports.user_logout = (req, res) => {
   req.logout();
-  res.redirect('/');
+
+  req.session.destroy(err => {
+    res.clearCookie('connect.sid');
+    res.json({ message: 'Logged out' });
+  });
 };
+
+/* Test if user is logged in
+exports.loggedIn = (req, res) => {
+  if (req.user)
+    return res.json({
+      message: 'You are logged in',
+      cookies: req.cookies,
+      user: req.user
+    });
+
+  return res.json({ error: 'NOT LOGGED IN', cookies: req.cookies });
+};
+*/

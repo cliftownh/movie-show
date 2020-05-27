@@ -1,8 +1,7 @@
-const axios = require('axios');
-const tmdbKey = require('../api/tmdbKey');
-const personURL = 'https://api.themoviedb.org/3/person/';
+const axios = require('axios'),
+  tmdbKey = require('../api/tmdbKey'),
+  personURL = 'https://api.themoviedb.org/3/person/';
 const keyURL = `?api_key=${tmdbKey}&language=en-US`;
-// const imgURL = 'http://image.tmdb.org/t/p/';
 
 exports.person_detail = (req, res, next) => {
   const { id } = req.params;

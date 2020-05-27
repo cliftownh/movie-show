@@ -71,7 +71,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use('/', homeRouter);
 app.use('/user', usersRouter);
 app.use('/movie', moviesRouter);
-app.use('/show', showsRouter);
+app.use('/tv', showsRouter);
 app.use('/person', personsRouter);
 
 /*

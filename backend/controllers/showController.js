@@ -1,9 +1,6 @@
-// const createError = require('http-errors');
-const axios = require('axios');
-const tmdbKey = require('../api/tmdbKey');
-
-// const imgURL = 'http://image.tmdb.org/t/p/';
-const tvURL = 'https://api.themoviedb.org/3/tv/';
+const axios = require('axios'),
+  tmdbKey = require('../api/tmdbKey'),
+  tvURL = 'https://api.themoviedb.org/3/tv/';
 const keyURL = `?api_key=${tmdbKey}&language=en-US`;
 
 exports.show_detail = (req, res, next) => {
