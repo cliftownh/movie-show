@@ -3,6 +3,7 @@ const mongoose = require('mongoose'),
   User = require('../models/user'),
   passport = require('passport');
 
+// Find all users
 exports.user_list = (req, res, next) => {
   User.find()
     .sort([['username', 'ascending']])
@@ -29,6 +30,7 @@ exports.user_detail = (req, res, next) => {
   });
 };
 
+/*
 exports.user_signup = (req, res, next) => {
   const user = new User({
     username: req.body.username,
@@ -39,11 +41,7 @@ exports.user_signup = (req, res, next) => {
     if (err) return next(err);
 
     res.status(201).json({
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email
-      },
+      user: user,
       message: 'Your account has been created!'
     });
   });
@@ -70,25 +68,24 @@ exports.user_login = (req, res, next) => {
     })(req, res, next);
   }
 };
+*/
 
 exports.user_logout = (req, res) => {
-  req.logout();
-
-  req.session.destroy(err => {
-    res.clearCookie('connect.sid');
-    res.json({ message: 'Logged out' });
-  });
+  res.json({ message: 'You have been logged out' });
 };
 
-/* Test if user is logged in
-exports.loggedIn = (req, res) => {
-  if (req.user)
-    return res.json({
-      message: 'You are logged in',
-      cookies: req.cookies,
-      user: req.user
-    });
+// Test if user is logged in
+exports.loggedIn = (req, res, next) => {
+  console.log('Access Granted dude!!!!!');
 
-  return res.json({ error: 'NOT LOGGED IN', cookies: req.cookies });
+  const token = req.headers.authorization;
+
+  console.log('TOKEN: ' + token);
+
+  if (token == null) {
+    console.log('Invalid token');
+    res.status(400).json({ error: 'Invalid token' });
+  }
+
+  res.json({ message: "You're logged in" });
 };
-*/

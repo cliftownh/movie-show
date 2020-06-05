@@ -1,24 +1,28 @@
 const express = require('express');
-const router = express.Router();
-const user_controller = require('../controllers/userController');
-
-// List all users
-router.get('/', user_controller.user_list);
+const router = express.Router(),
+  user_controller = require('../controllers/userController'),
+  review_controller = require('../controllers/reviewController'),
+  auth_controller = require('../controllers/authController');
 
 // Create a new user
-router.post('/signup', user_controller.user_signup);
+router.post('/signup', auth_controller.signup);
 
 // Log in existing user
-router.post('/login', user_controller.user_login);
+router.post('/login', auth_controller.login);
 
-// Log in existing user
+// Log out existing user
 router.get('/logout', user_controller.user_logout);
 
-/* Test route to check if user is logged in
-router.get('/loggedin', user_controller.loggedIn);
-*/
+// Test route to check if user is logged in
+router.get('/loggedin', auth_controller.auth, user_controller.loggedIn);
+
+// Get a list of reviews by one user
+router.get('/:id/reviews', review_controller.reviews_list);
 
 // Get one user's details
 router.get('/:id', user_controller.user_detail);
+
+// List all users
+router.get('/', user_controller.user_list);
 
 module.exports = router;

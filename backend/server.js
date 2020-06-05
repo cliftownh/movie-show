@@ -7,7 +7,10 @@ const express = require('express'),
   logger = require('morgan'),
   path = require('path'),
   cors = require('cors'),
-  User = require('./models/user');
+  User = require('./models/user'),
+  JwtStrategy = require('passport-jwt').Strategy,
+  ExtractJwt = require('passport-jwt').ExtractJwt,
+  { mongoDB, jwtSecret } = require('./api');
 const MongoStore = require('connect-mongo')(session);
 
 const homeRouter = require('./routes/home'),
@@ -23,9 +26,6 @@ const app = express();
 // app.set('view engine', 'pug');
 
 //Set up default mongoose connection
-const mongoDB =
-  'mongodb+srv://admin:admin@movieusers-c4ykc.gcp.mongodb.net/movieshow_users?retryWrites=true&w=majority';
-
 mongoose.connect(mongoDB, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -48,6 +48,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
+
+/*
 app.use(
   session({
     secret: 'secret',
@@ -59,14 +61,31 @@ app.use(
     })
   })
 );
+*/
 
 // Passport configuration
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+passport.use(
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: jwtSecret
+    },
+    async (jwt_payload, done) => {
+      try {
+        const user = await User.findById(jwt_payload.id);
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
+    }
+  )
+);
 
 app.use('/', homeRouter);
 app.use('/user', usersRouter);

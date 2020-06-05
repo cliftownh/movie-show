@@ -1,8 +1,8 @@
 const axios = require('axios'),
-  tmdbKey = require('../api/tmdbKey');
+  { tmdbKey } = require('../api');
 const keyURL = `?api_key=${tmdbKey}&language=en-US`;
 
-exports.search = (req, res, next) => {
+exports.search_tmdb = (req, res, next) => {
   const searchFor = encodeURIComponent(req.params.searchFor),
     type = req.originalUrl.split('/')[1];
   const searchURL = `https://api.themoviedb.org/3/search/${type}/${keyURL}&query=`;
