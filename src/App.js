@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import Layout from './components/Layout';
+import MovieShow from './containers/MovieShow';
 
-class App extends Component {
+export default class App extends Component {
   render() {
     return (
       <div>
-        <Layout />
+        <MovieShow />
       </div>
     );
   }
 }
-
-export default App;

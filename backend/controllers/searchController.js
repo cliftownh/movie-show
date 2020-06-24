@@ -1,6 +1,6 @@
 const axios = require('axios'),
   { tmdbKey } = require('../api');
-const keyURL = `?api_key=${tmdbKey}&language=en-US`;
+const keyURL = `?api_key=${tmdbKey}`;
 
 exports.search_tmdb = (req, res, next) => {
   const searchFor = encodeURIComponent(req.params.searchFor),

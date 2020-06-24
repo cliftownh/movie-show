@@ -13,6 +13,7 @@
 # production
 /build
 /backend/api
+/src/tmdb
 
 # misc
 .DS_Store

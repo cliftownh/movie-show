@@ -4,6 +4,7 @@ import Toolbar from './Navigation/Toolbar';
 const layout = props => (
   <Fragment>
     <Toolbar />
+    <main>{props.children}</main>
   </Fragment>
 );
 
