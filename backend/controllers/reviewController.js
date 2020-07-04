@@ -5,9 +5,11 @@ const Review = require('../models/review'),
 exports.review_create = (req, res, next) => {
   if (!req.user) return res.json({ error: 'You must log in to review' });
 
-  const { title, body, rating } = req.body;
+  const { season, episode, title, body, rating } = req.body;
   const review = new Review({
     tmdb_id: req.params.id,
+    season: season,
+    episode: episode,
     title: title,
     body: body,
     rating: rating,
@@ -40,7 +42,7 @@ exports.review_update = (req, res, next) => {
 
 // Get one review by it's ID
 exports.review_view = (req, res, next) => {
-  const id = mongoose.Types.ObjectId(req.params.revID);
+  const id = mongoose.Types.ObjectId(req.params.id);
 
   Review.findById(id).exec((err, review) => {
     if (err) return next(err);

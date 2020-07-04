@@ -9,11 +9,11 @@ const ListItem = props => {
     profile_path,
     title,
     name,
-    known_for
+    character
   } = props.children;
   let isPerson = false;
 
-  if (known_for) isPerson = true;
+  if (profile_path) isPerson = true;
 
   return (
     <li className="media" id={id}>
@@ -49,6 +49,7 @@ const ListItem = props => {
             </Link>
           )}
         </h5>
+        {isPerson ? <p>{character}</p> : null}
       </div>
     </li>
   );

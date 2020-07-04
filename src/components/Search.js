@@ -7,12 +7,11 @@ const Search = props => {
     { value, bind, reset } = useInput(''),
     history = useHistory();
 
-  const handleSubmit = evt => {
-    evt.preventDefault();
+  const handleSubmit = e => {
+    e.preventDefault();
     reset();
     if (value.length > 0) {
       history.push(`/search/${type}/${encodeURIComponent(value)}`);
-      window.location.reload();
     }
   };
 

@@ -37,19 +37,14 @@ const Home = props => {
     fetchData();
   }, []);
 
-  // Promise.all([popMovies, popTV])
-  //   .then(responses => {
-  //     setMovies(responses[0].data.results);
-  //     setShows(responses[1].data.results);
-  //   })
-  //   .catch(errors => console.log(errors));
-
   return (
     <Fragment>
       {isError && <div>Something went wrong...</div>}
 
       {isLoading ? (
-        <div>Loading...</div>
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
       ) : (
         <div className="container-sm">
           <div className="row">

@@ -20,7 +20,9 @@ const TvSeasonDetail = props => {
       {isError ? <div>Something went wrong...</div> : null}
 
       {isLoading ? (
-        <div>Loading...</div>
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
       ) : (
         <div className="container">
           <h1>
@@ -43,7 +45,7 @@ const TvSeasonDetail = props => {
                       <Link
                         to={`/tv/${id}/season/${seasonNum}/episode/${episode.episode_number}`}
                         key={`ep${episode.episode_number}`}
-                        className="tv-num"
+                        className="link-color"
                       >
                         {episode.episode_number + ' '}
                       </Link>
@@ -53,7 +55,6 @@ const TvSeasonDetail = props => {
                 })
               : null}
           </div>
-          {/* <p>{overview}</p> */}
         </div>
       )}
     </Fragment>

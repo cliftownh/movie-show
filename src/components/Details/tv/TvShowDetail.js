@@ -2,15 +2,17 @@ import React, { Fragment } from 'react';
 import tmdbKey from '../../../tmdb';
 import { useParams, Link } from 'react-router-dom';
 import useAPI from '../../../hooks/api-hook';
+import ListItem from '../../Lists/ListItem';
+import Modal from '../../Navigation/Modal';
 
-const base_url = 'https://api.themoviedb.org/3/tv/';
-const keyURL = `?api_key=${tmdbKey}`;
+const baseURL = 'https://api.themoviedb.org/3/tv/';
+const keyURL = `?api_key=${tmdbKey}&append_to_response=credits`;
 
 const TvShowDetail = props => {
   const { id } = useParams();
 
-  const detURL = base_url + id + keyURL + `&append_to_response=credits`;
-  // const credURL = base_url + id + `/credits${keyURL}`;
+  const detURL = baseURL + id + keyURL;
+  // const credURL = baseURL + id + `/credits${keyURL}`;
 
   const [{ data, isLoading, isError }] = useAPI(detURL, {});
   // const [
@@ -34,7 +36,9 @@ const TvShowDetail = props => {
       {isError ? <div>Something went wrong...</div> : null}
 
       {isLoading ? (
-        <div>Loading...</div>
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
       ) : (
         <div className="container">
           <h1>
@@ -66,7 +70,7 @@ const TvShowDetail = props => {
                     <Link
                       to={`/tv/${id}/season/${season.season_number}`}
                       key={`season${season.season_number}`}
-                      className="tv-num"
+                      className="link-color"
                     >
                       {season.season_number + ' '}
                     </Link>
@@ -78,14 +82,24 @@ const TvShowDetail = props => {
 
           <p>{overview}</p>
 
-          <h3>CAST</h3>
+          {props.isAuthenticated ? <Modal>{{ id, data }}</Modal> : null}
+
+          {cast.length ? <h3>CAST</h3> : null}
           {cast
-            ? cast.slice(0, 5).map(actor => <p key={actor.id}>{actor.name}</p>)
+            ? cast
+                .slice(0, 5)
+                .map(actor => <ListItem key={actor.id}>{actor}</ListItem>)
             : null}
 
           <h3>CREATED BY</h3>
           {created_by
-            ? created_by.map(creator => <p key={creator.id}>{creator.name}</p>)
+            ? created_by.map(creator => (
+                <h5 key={creator.id}>
+                  <Link to={`/person/${creator.id}`} className="text-reset">
+                    {creator.name}
+                  </Link>
+                </h5>
+              ))
             : null}
         </div>
       )}

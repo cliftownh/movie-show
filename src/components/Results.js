@@ -14,7 +14,9 @@ const Results = props => {
       {isError && <div>Something went wrong...</div>}
 
       {isLoading ? (
-        <div>Loading...</div>
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
       ) : (
         <div className="container-sm">
           {data.results ? <List>{data.results}</List> : null}

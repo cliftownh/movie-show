@@ -11,10 +11,10 @@ router.post('/signup', auth_controller.signup);
 router.post('/login', auth_controller.login);
 
 // Log out existing user
-router.get('/logout', user_controller.user_logout);
+router.get('/logout', auth_controller.logout);
 
 // Test route to check if user is logged in
-router.get('/loggedin', auth_controller.auth, user_controller.loggedIn);
+// router.get('/loggedin', auth_controller.auth, user_controller.loggedIn);
 
 // Get a list of reviews by one user
 router.get('/:id/reviews', review_controller.reviews_list);

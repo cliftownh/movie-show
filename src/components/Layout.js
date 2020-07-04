@@ -1,11 +1,16 @@
 import React, { Fragment } from 'react';
 import Toolbar from './Navigation/Toolbar';
+import { useAppContext } from '../context';
 
-const layout = props => (
-  <Fragment>
-    <Toolbar />
-    <main>{props.children}</main>
-  </Fragment>
-);
+const Layout = props => {
+  const { isAuthenticated } = useAppContext().appState;
 
-export default layout;
+  return (
+    <Fragment>
+      <Toolbar isAuthenticated={isAuthenticated} />
+      <main>{props.children}</main>
+    </Fragment>
+  );
+};
+
+export default Layout;

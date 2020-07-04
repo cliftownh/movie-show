@@ -3,27 +3,22 @@ const express = require('express'),
   passport = require('passport'),
   createError = require('http-errors'),
   cookieParser = require('cookie-parser'),
-  session = require('express-session'),
+  bodyParser = require('body-parser'),
   logger = require('morgan'),
   path = require('path'),
   cors = require('cors'),
+  session = require('express-session'),
   User = require('./models/user'),
-  JwtStrategy = require('passport-jwt').Strategy,
-  ExtractJwt = require('passport-jwt').ExtractJwt,
-  { mongoDB, jwtSecret } = require('./api');
+  LocalStrategy = require('passport-local').Strategy,
+  { accessSecret, mongoDB } = require('./api');
 const MongoStore = require('connect-mongo')(session);
 
 const homeRouter = require('./routes/home'),
   usersRouter = require('./routes/users'),
-  moviesRouter = require('./routes/movies'),
-  showsRouter = require('./routes/shows'),
-  personsRouter = require('./routes/persons');
+  reviewsRouter = require('./routes/reviews');
 
 const PORT = 4000;
 const app = express();
-
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'pug');
 
 //Set up default mongoose connection
 mongoose.connect(mongoDB, {
@@ -42,17 +37,21 @@ db.once('open', function () {
   console.log('MongoDB database connection established successfully');
 });
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: 'http://localhost:3000'
+  })
+);
 app.use(logger('dev'));
-app.use(express.json());
 app.use(cookieParser());
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
-/*
 app.use(
   session({
-    secret: 'secret',
+    secret: accessSecret,
     saveUninitialized: false,
     resave: false,
     store: new MongoStore({
@@ -61,17 +60,18 @@ app.use(
     })
   })
 );
-*/
 
 // Passport configuration
 app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.session());
 
-passport.use(User.createStrategy());
+passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+/* JWT strategy to be implemented later
 passport.use(
-  new JwtStrategy(
+  new Strategy(
     {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: jwtSecret
@@ -86,12 +86,11 @@ passport.use(
     }
   )
 );
+*/
 
 app.use('/', homeRouter);
 app.use('/user', usersRouter);
-app.use('/movie', moviesRouter);
-app.use('/tv', showsRouter);
-app.use('/person', personsRouter);
+app.use('/review', reviewsRouter);
 
 /*
  ** Catch 404 and forward to error handler

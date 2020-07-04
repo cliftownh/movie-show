@@ -1,41 +1,44 @@
 import React, { Fragment } from 'react';
-import tmdbKey from '../../tmdb';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import useAPI from '../../hooks/api-hook';
+import ListItem from '../Lists/ListItem';
+import Modal from '../Navigation/Modal';
+import tmdbKey from '../../tmdb';
 
-const base_url = 'https://api.themoviedb.org/3/movie/';
-const keyURL = `?api_key=${tmdbKey}`;
+const baseURL = 'https://api.themoviedb.org/3/movie/';
+const keyURL = `?api_key=${tmdbKey}&append_to_response=credits`;
 
 const MovieDetail = props => {
   const { id } = useParams();
+  const detailURL = baseURL + id + keyURL;
 
-  const detURL = base_url + id + keyURL;
-  const credURL = base_url + id + `/credits${keyURL}`;
-
-  const [{ data: detData, isLoading: detLoading, isError: detError }] = useAPI(
-    detURL,
-    {}
-  );
-  const [
-    { data: credData, isLoading: credLoading, isError: credError }
-  ] = useAPI(credURL, {});
+  const [{ data, isLoading, isError }] = useAPI(detailURL, {});
 
   const {
-      title,
-      overview,
-      release_date,
-      poster_path,
-      genres,
-      runtime
-    } = detData,
-    { cast, crew } = credData;
+    title,
+    overview,
+    release_date,
+    poster_path,
+    genres,
+    runtime,
+    credits
+  } = data;
+  let cast = [],
+    crew = [];
+
+  if (credits) {
+    cast = credits.cast;
+    crew = credits.crew;
+  }
 
   return (
     <Fragment>
-      {detError || credError ? <div>Something went wrong...</div> : null}
+      {isError ? <div>Something went wrong...</div> : null}
 
-      {detLoading || credLoading ? (
-        <div>Loading...</div>
+      {isLoading ? (
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
       ) : (
         <div className="container">
           <h1>
@@ -62,15 +65,26 @@ const MovieDetail = props => {
               : null}
           </ul>
           <p>{overview}</p>
+
+          {props.isAuthenticated ? <Modal>{{ id, data }}</Modal> : null}
+
           <h3>CAST</h3>
           {cast
-            ? cast.slice(0, 5).map(actor => <p key={actor.id}>{actor.name}</p>)
+            ? cast
+                .slice(0, 5)
+                .map(actor => <ListItem key={actor.id}>{actor}</ListItem>)
             : null}
           <h3>DIRECTED BY</h3>
           {crew
             ? crew.map(member => {
                 if (member.job === 'Director') {
-                  return <p key={member.id}>{member.name}</p>;
+                  return (
+                    <h5 key={member.id}>
+                      <Link to={`/person/${member.id}`} className="text-reset">
+                        {member.name}
+                      </Link>
+                    </h5>
+                  );
                 }
                 return null;
               })
@@ -78,8 +92,18 @@ const MovieDetail = props => {
           <h3>WRITTEN BY</h3>
           {crew
             ? crew.map(member => {
-                if (member.job === 'Screenplay') {
-                  return <p key={member.id}>{member.name}</p>;
+                if (
+                  member.job === 'Writer' ||
+                  member.job === 'Co-Writer' ||
+                  member.job === 'Screenplay'
+                ) {
+                  return (
+                    <h5 key={member.id}>
+                      <Link to={`/person/${member.id}`} className="text-reset">
+                        {member.name}
+                      </Link>
+                    </h5>
+                  );
                 }
                 return null;
               })

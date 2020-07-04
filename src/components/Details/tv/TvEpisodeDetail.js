@@ -2,6 +2,8 @@ import React, { Fragment } from 'react';
 import tmdbKey from '../../../tmdb';
 import { useParams, Link } from 'react-router-dom';
 import useAPI from '../../../hooks/api-hook';
+import ListItem from '../../Lists/ListItem';
+import Modal from '../../Navigation/Modal';
 
 const base_url = 'https://api.themoviedb.org/3/tv/';
 const keyURL = `?api_key=${tmdbKey}`;
@@ -30,7 +32,9 @@ const TvShowDetail = props => {
       {isError ? <div>Something went wrong...</div> : null}
 
       {isLoading ? (
-        <div>Loading...</div>
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
       ) : (
         <div className="container">
           <h1>
@@ -52,6 +56,8 @@ const TvShowDetail = props => {
           <p>{`Aired: ${air_date}`}</p>
 
           <p>{overview}</p>
+
+          {props.isAuthenticated ? <Modal>{{ id, data }}</Modal> : null}
 
           <h3>DIRECTED BY</h3>
           {crew
@@ -77,8 +83,8 @@ const TvShowDetail = props => {
             guest_stars.length ? (
               <Fragment>
                 <h3>GUEST STARRING</h3>
-                {guest_stars.map(guest => (
-                  <p key={guest.id}>{guest.name}</p>
+                {guest_stars.slice(0, 5).map(guest => (
+                  <ListItem key={guest.id}>{guest}</ListItem>
                 ))}
               </Fragment>
             ) : null
