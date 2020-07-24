@@ -3,7 +3,13 @@ const User = require('../models/user'),
 // jwt = require('jsonwebtoken'),
 // { jwtSecret, refreshSecret } = require('../api');
 
-exports.auth = passport.authenticate('local');
+exports.auth = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    next();
+  } else {
+    return res.json({ message: 'You need to be logged in.' });
+  }
+};
 
 exports.signup = (req, res, next) => {
   const user = new User({
@@ -50,13 +56,25 @@ exports.login = (req, res, next) => {
   }
 };
 
-exports.logout = (req, res) => {
+exports.logout = (req, res, next) => {
   req.logout();
 
   req.session.destroy(err => {
-    res.clearCookie('connect.sid');
-    res.json({ message: 'Logged out' });
+    if (err) {
+      next(err);
+    } else {
+      res.clearCookie('connect.sid');
+      res.json({ message: 'Logged out' });
+    }
   });
+};
+
+exports.loggedIn = (req, res) => {
+  if (req.user) {
+    res.json({ message: 'You are logged in', user: req.user });
+  } else {
+    console.log('Not logged in.');
+  }
 };
 
 /* JWT strategy to be implemented later

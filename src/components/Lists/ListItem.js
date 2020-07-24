@@ -16,7 +16,7 @@ const ListItem = props => {
   if (profile_path) isPerson = true;
 
   return (
-    <li className="media" id={id}>
+    <li className="media popular" id={id}>
       {poster_path ? (
         <img
           src={`http://image.tmdb.org/t/p/w92${poster_path}`}

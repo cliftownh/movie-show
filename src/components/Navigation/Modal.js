@@ -5,27 +5,38 @@ import axios from 'axios';
 const Modal = props => {
   const { title, name, season_number, episode_number } = props.children.data;
   const { id } = props.children,
-    reviewTitle = useRef(),
+    reviewHeadline = useRef(),
     reviewBody = useRef(),
     reviewRating = useRef(),
+    closeButton = useRef(),
     history = useHistory(),
     url = `http://localhost:4000/review/${id}`;
+
+  let format = 'movie';
+  if (name) format = 'tv';
 
   const handleSubmit = e => {
     e.preventDefault();
 
     if (reviewRating.current.value !== '') {
-      axios
-        .post(url, {
+      axios({
+        method: 'post',
+        url: url,
+        withCredentials: true,
+        data: {
+          format: format,
+          title: title || name,
           season: season_number,
           episode: episode_number,
-          title: reviewTitle.current.value,
+          headline: reviewHeadline.current.value,
           body: reviewBody.current.value,
           rating: reviewRating.current.value
-        })
+        }
+      })
         .then(response => {
           if (response.status === 201) {
-            history.push(`/review/${response.id}`);
+            closeButton.current.click();
+            history.push(`/review/${response.data.id}`);
           }
         })
         .catch(err => console.log(err));
@@ -53,6 +64,7 @@ const Modal = props => {
                 className="close"
                 data-dismiss="modal"
                 aria-label="Close"
+                ref={closeButton}
               >
                 <span aria-hidden="true" className="close-x">
                   &times;
@@ -101,17 +113,17 @@ const Modal = props => {
 
                 <div className="form-group row">
                   <label
-                    htmlFor="review-title"
+                    htmlFor="review-headline"
                     className="col-sm-2 col-form-label"
                   >
-                    Title
+                    Headline
                   </label>
                   <div className="col-sm-7">
                     <input
                       type="text"
                       className="form-control"
-                      id="review-title"
-                      ref={reviewTitle}
+                      id="review-headline"
+                      ref={reviewHeadline}
                     />
                   </div>
                 </div>

@@ -25,13 +25,46 @@ const MovieDetail = props => {
   let movies = [],
     shows = [];
 
+  // Filter array by department
+  const findDept = arr => {
+    return arr.filter(obj => {
+      return obj.department === known_for_department;
+    });
+  };
+
+  // Filter out duplicates from array based on id
+  const findDups = arr => {
+    return arr.filter(
+      (obj, index, self) => self.findIndex(same => same.id === obj.id) === index
+    );
+  };
+
+  // Sort an array by popularity and list the first 5 objects
+  const findTop5 = arr => {
+    return arr
+      .sort((a, b) => b.popularity - a.popularity)
+      .slice(0, 5)
+      .map((obj, i) => <ListItem key={`${obj.id}-${i}`}>{obj}</ListItem>);
+  };
+
   if (movie_credits || tv_credits) {
+    // Use the cast credits array for actors
     if (known_for_department === 'Acting') {
       movies = movie_credits.cast;
       shows = tv_credits.cast;
+
+      // Filter out actor's multiple appearances on the same show
+      shows = findDups(shows);
     } else {
+      // Use the crew credits array for other people
       movies = movie_credits.crew;
       shows = tv_credits.crew;
+
+      movies = findDept(movies);
+      movies = findDups(movies);
+
+      shows = findDept(shows);
+      shows = findDups(shows);
     }
   }
 
@@ -57,24 +90,10 @@ const MovieDetail = props => {
           <p>{place_of_birth}</p>
 
           {movies.length ? <h3>Movies</h3> : null}
-          {movies
-            ? movies
-                .sort((a, b) => b.popularity - a.popularity)
-                .slice(0, 5)
-                .map((movie, i) => (
-                  <ListItem key={`${movie.id}-${i}`}>{movie}</ListItem>
-                ))
-            : null}
+          {movies ? findTop5(movies) : null}
 
           {shows.length ? <h3>TV</h3> : null}
-          {shows
-            ? shows
-                .sort((a, b) => b.popularity - a.popularity)
-                .slice(0, 5)
-                .map((show, i) => (
-                  <ListItem key={`${show.id}-${i}`}>{show}</ListItem>
-                ))
-            : null}
+          {shows ? findTop5(shows) : null}
         </div>
       )}
     </Fragment>

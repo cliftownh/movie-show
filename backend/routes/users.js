@@ -14,10 +14,10 @@ router.post('/login', auth_controller.login);
 router.get('/logout', auth_controller.logout);
 
 // Test route to check if user is logged in
-// router.get('/loggedin', auth_controller.auth, user_controller.loggedIn);
+router.get('/loggedin', auth_controller.auth, auth_controller.loggedIn);
 
 // Get a list of reviews by one user
-router.get('/:id/reviews', review_controller.reviews_list);
+router.get('/:id/reviews', review_controller.list);
 
 // Get one user's details
 router.get('/:id', user_controller.user_detail);

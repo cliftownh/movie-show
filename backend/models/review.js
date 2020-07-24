@@ -4,12 +4,15 @@ const { Schema } = mongoose;
 const Review = new Schema(
   {
     tmdb_id: { type: Number, required: true },
+    format: { type: String, required: true },
+    title: { type: String, required: true, maxlength: 200 },
     season: { type: Number, required: false },
     episode: { type: Number, required: false },
-    title: { type: String, required: false, maxlength: 50 },
+    headline: { type: String, required: false, maxlength: 50 },
     body: { type: String, required: false, maxlength: 1000 },
     rating: { type: Number, required: true, min: 0, max: 10 },
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true }
+    author: { type: String, required: true, maxlength: 100 },
+    user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true }
   },
   {
     timestamps: true

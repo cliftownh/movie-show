@@ -11,7 +11,7 @@ const Toolbar = props => {
     { setAppState } = useAppContext();
 
   const handleLogout = () => {
-    axios.get('http://localhost:4000/user/logout');
+    axios.get('http://localhost:4000/user/logout', { withCredentials: true });
     Cookies.remove('authenticatedUser');
     setAppState({ isAuthenticated: false });
     history.push('/');

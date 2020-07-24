@@ -52,6 +52,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   session({
     secret: accessSecret,
+    cookie: { maxAge: 60000 * 30 },
     saveUninitialized: false,
     resave: false,
     store: new MongoStore({

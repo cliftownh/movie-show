@@ -27,7 +27,7 @@ const Login = props => {
         .then(response => {
           if (response.status === 200) {
             Cookies.set('authenticatedUser', response.data.user, {
-              expires: 1
+              expires: 1 / 48
             });
             setAppState({ isAuthenticated: true });
             history.push('/');

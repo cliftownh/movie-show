@@ -2,28 +2,34 @@ const Review = require('../models/review'),
   mongoose = require('mongoose'),
   createError = require('http-errors');
 
-exports.review_create = (req, res, next) => {
+exports.create = (req, res, next) => {
   if (!req.user) return res.json({ error: 'You must log in to review' });
 
-  const { season, episode, title, body, rating } = req.body;
+  const { format, title, season, episode, headline, body, rating } = req.body;
+
   const review = new Review({
     tmdb_id: req.params.id,
+    format: format,
+    title: title,
     season: season,
     episode: episode,
-    title: title,
+    headline: headline,
     body: body,
     rating: rating,
-    user: req.user._id
+    author: req.user.username,
+    user_id: req.user._id
   });
 
-  review.save(err => {
+  review.save((err, newReview) => {
     if (err) return next(err);
 
-    res.json({ id: review._id });
+    console.log('Review saved: ' + newReview._id);
+
+    res.status(201).json({ id: newReview._id });
   });
 };
 
-exports.review_update = (req, res, next) => {
+exports.update = (req, res, next) => {
   if (!req.user) return res.json({ error: 'You must log in to edit review' });
 
   const id = mongoose.Types.ObjectId(req.params.revID);
@@ -41,29 +47,47 @@ exports.review_update = (req, res, next) => {
 };
 
 // Get one review by it's ID
-exports.review_view = (req, res, next) => {
+exports.view = (req, res, next) => {
   const id = mongoose.Types.ObjectId(req.params.id);
 
   Review.findById(id).exec((err, review) => {
     if (err) return next(err);
 
-    if (review == null) {
+    if (review === null) {
       const error = createError(400, 'Review not found');
       next(error);
     }
 
+    const {
+      tmdb_id,
+      format,
+      title,
+      season,
+      episode,
+      headline,
+      body,
+      rating,
+      author,
+      user_id
+    } = review;
+
     res.json({
-      tmdb_id: review.tmdb_id,
-      title: review.title,
-      body: review.body,
-      rating: review.rating,
-      user: review.user
+      tmdb_id: tmdb_id,
+      format: format,
+      title: title,
+      season: season,
+      episode: episode,
+      headline: headline,
+      body: body,
+      rating: rating,
+      author: author,
+      user_id: user_id
     });
   });
 };
 
 // Get all reviews by user, movie, or TV show
-exports.reviews_list = (req, res, next) => {
+exports.list = (req, res, next) => {
   const type = req.originalUrl.split('/')[1];
   let field, id;
 
