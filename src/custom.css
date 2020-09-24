@@ -165,3 +165,97 @@ label,
 .popular {
   margin-bottom: 1rem;
 }
+
+.rounded {
+  border-radius: 8px;
+}
+
+.movie-detail {
+  position: relative;
+  bottom: 500px;
+}
+
+.banner-img {
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+}
+
+.title-text {
+  text-shadow: 3px 3px 10px black;
+}
+
+.parallax {
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  perspective: 1px;
+  -webkit-perspective: 1px;
+}
+
+.parallax_layer {
+  position: absolute;
+  background-position: center;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.parallax_layer_base {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.parallax_layer_back {
+  transform: translateZ(-1px);
+  -webkit-transform: translateZ(-1px);
+}
+
+.parallax_layer_back {
+  transform: translateZ(-1px) scale(2);
+}
+
+.parallax_layer_deep {
+  transform: translateZ(-2px) scale(3);
+}
+
+.contained {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  width: 90%;
+  @media (min-width: 500px) {
+    width: 80%;
+  }
+  @media (min-width: 600px) {
+    width: 60%;
+  }
+}
+
+.main-detail {
+  padding: 1em 0;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0px -10px 60px rgba(0, 0, 0, 0.25);
+}
+
+header {
+  overflow: hidden;
+  /* padding-bottom determines the height of the header */
+  padding-bottom: 40%;
+  @media (min-width: 600px) {
+    padding-bottom: 50%;
+  }
+  @media (min-width: 700px) {
+    padding-bottom: 45%;
+  }
+}
+
+header img {
+  width: 100%;
+  max-width: none;
+  position: fixed;
+  top: 0%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+}

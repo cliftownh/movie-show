@@ -3,6 +3,7 @@ import tmdbKey from '../../tmdb';
 import { useParams } from 'react-router-dom';
 import useAPI from '../../hooks/api-hook';
 import ListItem from '../Lists/ListItem';
+import noProfile from '../../images/noProfile.png';
 
 const base_url = 'https://api.themoviedb.org/3/person/';
 const keyURL = `?api_key=${tmdbKey}&append_to_response=movie_credits,tv_credits`;
@@ -56,7 +57,7 @@ const MovieDetail = props => {
       // Filter out actor's multiple appearances on the same show
       shows = findDups(shows);
     } else {
-      // Use the crew credits array for other people
+      // Use the crew credits array for other people (writers/directors)
       movies = movie_credits.crew;
       shows = tv_credits.crew;
 
@@ -81,11 +82,15 @@ const MovieDetail = props => {
           <h1>
             <strong>{name}</strong>
           </h1>
-          <img
-            src={`https://image.tmdb.org/t/p/h632${profile_path}`}
-            className="profile-pic"
-            alt={name}
-          />
+          {profile_path !== null ? (
+            <img
+              src={`https://image.tmdb.org/t/p/h632${profile_path}`}
+              className="profile-pic rounded"
+              alt={name}
+            />
+          ) : (
+            <img src={noProfile} className="profile-pic rounded" alt={name} />
+          )}
           <p>{`Born: ${birthday}`}</p>
           <p>{place_of_birth}</p>
 

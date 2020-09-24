@@ -23,6 +23,7 @@ const TvShowDetail = props => {
     overview,
     created_by,
     poster_path,
+    backdrop_path,
     genres,
     seasons,
     credits
@@ -41,66 +42,79 @@ const TvShowDetail = props => {
         </div>
       ) : (
         <div className="container">
-          <h1>
-            <strong>{name}</strong>
-          </h1>
-          <img
-            src={`https://image.tmdb.org/t/p/w342${poster_path}`}
-            alt={name}
-          />
+          <header className="zoom-me">
+            <img
+              src={`https://image.tmdb.org/t/p/w1280${backdrop_path}`}
+              className="banner-img"
+              alt={name}
+            />
+          </header>
 
-          <ul className="list-inline">
-            {genres
-              ? genres.map(genre => (
-                  <li key={genre.id} className="list-inline-item">
-                    {genre.name}
-                  </li>
-                ))
-              : null}
-          </ul>
+          <div className="main-detail bg-dark rounded">
+            <div className="contained">
+              <h1>
+                <strong>{name}</strong>
+              </h1>
+              <img
+                src={`https://image.tmdb.org/t/p/w342${poster_path}`}
+                className="rounded"
+                alt={name}
+              />
 
-          <p>
-            <strong>Seasons: </strong>
-          </p>
+              <ul className="list-inline">
+                {genres
+                  ? genres.map(genre => (
+                      <li key={genre.id} className="list-inline-item">
+                        {genre.name}
+                      </li>
+                    ))
+                  : null}
+              </ul>
 
-          {seasons
-            ? seasons.map(season => {
-                if (season.season_number > 0) {
-                  return (
-                    <Link
-                      to={`/tv/${id}/season/${season.season_number}`}
-                      key={`season${season.season_number}`}
-                      className="link-color"
-                    >
-                      {season.season_number + ' '}
-                    </Link>
-                  );
-                }
-                return null;
-              })
-            : null}
+              <p>
+                <strong>Seasons: </strong>
+              </p>
 
-          <p>{overview}</p>
+              {seasons
+                ? seasons.map(season => {
+                    if (season.season_number > 0) {
+                      return (
+                        <Link
+                          to={`/tv/${id}/season/${season.season_number}`}
+                          key={`season${season.season_number}`}
+                          className="link-color"
+                        >
+                          {season.season_number + ' '}
+                        </Link>
+                      );
+                    }
+                    return null;
+                  })
+                : null}
 
-          {props.isAuthenticated ? <Modal>{{ id, data }}</Modal> : null}
+              <p>{overview}</p>
 
-          {cast.length ? <h3>CAST</h3> : null}
-          {cast
-            ? cast
-                .slice(0, 5)
-                .map(actor => <ListItem key={actor.id}>{actor}</ListItem>)
-            : null}
+              {props.isAuthenticated ? <Modal>{{ id, data }}</Modal> : null}
 
-          <h3>CREATED BY</h3>
-          {created_by
-            ? created_by.map(creator => (
-                <h5 key={creator.id}>
-                  <Link to={`/person/${creator.id}`} className="text-reset">
-                    {creator.name}
-                  </Link>
-                </h5>
-              ))
-            : null}
+              {cast.length ? <h3>CAST</h3> : null}
+              {cast
+                ? cast
+                    .slice(0, 5)
+                    .map(actor => <ListItem key={actor.id}>{actor}</ListItem>)
+                : null}
+
+              <h3>CREATED BY</h3>
+              {created_by
+                ? created_by.map(creator => (
+                    <h5 key={creator.id}>
+                      <Link to={`/person/${creator.id}`} className="text-reset">
+                        {creator.name}
+                      </Link>
+                    </h5>
+                  ))
+                : null}
+            </div>
+          </div>
         </div>
       )}
     </Fragment>

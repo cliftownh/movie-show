@@ -4,6 +4,7 @@ import useAPI from '../../hooks/api-hook';
 import ListItem from '../Lists/ListItem';
 import Modal from '../Navigation/Modal';
 import tmdbKey from '../../tmdb';
+import noPoster from '../../images/noPoster.png';
 
 const baseURL = 'https://api.themoviedb.org/3/movie/';
 const keyURL = `?api_key=${tmdbKey}&append_to_response=credits`;
@@ -18,6 +19,7 @@ const MovieDetail = props => {
     title,
     overview,
     release_date,
+    backdrop_path,
     poster_path,
     genres,
     runtime,
@@ -41,73 +43,97 @@ const MovieDetail = props => {
         </div>
       ) : (
         <div className="container">
-          <h1>
-            <strong>{title}</strong>
-            {release_date ? (
-              <small className="release-date">
-                {' '}
-                ({release_date.split('-')[0]})
-              </small>
-            ) : null}
-          </h1>
-          <img
-            src={`https://image.tmdb.org/t/p/w342${poster_path}`}
-            alt={title}
-          />
-          <p>{runtime} minutes</p>
-          <ul className="list-inline">
-            {genres
-              ? genres.map(genre => (
-                  <li key={genre.id} className="list-inline-item">
-                    {genre.name}
-                  </li>
-                ))
-              : null}
-          </ul>
-          <p>{overview}</p>
+          <header className="zoom-me">
+            <img
+              src={`https://image.tmdb.org/t/p/w1280${backdrop_path}`}
+              className="banner-img"
+              alt={title}
+            />
+          </header>
 
-          {props.isAuthenticated ? <Modal>{{ id, data }}</Modal> : null}
+          <div className="main-detail bg-dark rounded">
+            <div className="contained">
+              <h1 className="title-text">
+                <strong>{title}</strong>
+                {release_date ? (
+                  <small className="release-date">
+                    {' '}
+                    ({release_date.split('-')[0]})
+                  </small>
+                ) : null}
+              </h1>
 
-          <h3>CAST</h3>
-          {cast
-            ? cast
-                .slice(0, 5)
-                .map(actor => <ListItem key={actor.id}>{actor}</ListItem>)
-            : null}
-          <h3>DIRECTED BY</h3>
-          {crew
-            ? crew.map(member => {
-                if (member.job === 'Director') {
-                  return (
-                    <h5 key={member.id}>
-                      <Link to={`/person/${member.id}`} className="text-reset">
-                        {member.name}
-                      </Link>
-                    </h5>
-                  );
-                }
-                return null;
-              })
-            : null}
-          <h3>WRITTEN BY</h3>
-          {crew
-            ? crew.map(member => {
-                if (
-                  member.job === 'Writer' ||
-                  member.job === 'Co-Writer' ||
-                  member.job === 'Screenplay'
-                ) {
-                  return (
-                    <h5 key={member.id}>
-                      <Link to={`/person/${member.id}`} className="text-reset">
-                        {member.name}
-                      </Link>
-                    </h5>
-                  );
-                }
-                return null;
-              })
-            : null}
+              {poster_path ? (
+                <img
+                  src={`https://image.tmdb.org/t/p/w342${poster_path}`}
+                  className="rounded poster-img"
+                  alt={title}
+                />
+              ) : (
+                <img src={noPoster} className="mr-3 rounded" alt={title} />
+              )}
+
+              <p>{runtime} minutes</p>
+              <ul className="list-inline">
+                {genres
+                  ? genres.map(genre => (
+                      <li key={genre.id} className="list-inline-item">
+                        {genre.name}
+                      </li>
+                    ))
+                  : null}
+              </ul>
+              <p>{overview}</p>
+
+              {props.isAuthenticated ? <Modal>{{ id, data }}</Modal> : null}
+
+              <h3>CAST</h3>
+              {cast
+                ? cast
+                    .slice(0, 5)
+                    .map((actor, i) => (
+                      <ListItem key={`${actor.id}-${i}`}>{actor}</ListItem>
+                    ))
+                : null}
+              <h3>DIRECTED BY</h3>
+              {crew
+                ? crew.map(member => {
+                    const { id, name, job } = member;
+                    if (job === 'Director') {
+                      return (
+                        <h5 key={`${id}-d`}>
+                          <Link to={`/person/${id}`} className="text-reset">
+                            {name}
+                          </Link>
+                        </h5>
+                      );
+                    }
+                    return null;
+                  })
+                : null}
+              <h3>WRITTEN BY</h3>
+              {crew
+                ? crew.map(member => {
+                    const { id, name, job } = member;
+                    if (
+                      job === 'Writer' ||
+                      job === 'Co-Writer' ||
+                      job === 'Screenplay' ||
+                      job === 'Author'
+                    ) {
+                      return (
+                        <h5 key={`${id}-w`}>
+                          <Link to={`/person/${id}`} className="text-reset">
+                            {name}
+                          </Link>
+                        </h5>
+                      );
+                    }
+                    return null;
+                  })
+                : null}
+            </div>
+          </div>
         </div>
       )}
     </Fragment>

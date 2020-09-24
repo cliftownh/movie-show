@@ -46,6 +46,25 @@ const Home = props => {
           <span className="sr-only">Loading...</span>
         </div>
       ) : (
+        // <table className="table table-striped table-dark">
+        //   <thead>
+        //     <tr>
+        //       <th scope="col">Popular Movies</th>
+        //       <th scope="col">Popular Shows</th>
+        //     </tr>
+        //   </thead>
+        //   <tbody>
+        //     <tr>
+        //       <td>
+        //         <List>{movies}</List>
+        //       </td>
+        //       <td>
+        //         <List>{shows}</List>
+        //       </td>
+        //     </tr>
+        //   </tbody>
+        // </table>
+
         <div className="container-sm">
           <div className="row">
             <div className="col-sm">

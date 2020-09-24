@@ -42,6 +42,7 @@ const TvShowDetail = props => {
           </h1>
           <img
             src={`https://image.tmdb.org/t/p/w300${still_path}`}
+            className="rounded"
             alt={name}
           />
 
@@ -63,7 +64,13 @@ const TvShowDetail = props => {
           {crew
             ? crew.map(member => {
                 if (member.job === 'Director') {
-                  return <p key={member.id}>{member.name}</p>;
+                  return (
+                    <p key={`${member.id}-d`}>
+                      <Link to={`/person/${member.id}`} className="text-reset">
+                        {member.name}
+                      </Link>
+                    </p>
+                  );
                 }
                 return null;
               })
@@ -72,8 +79,14 @@ const TvShowDetail = props => {
           <h3>WRITTEN BY</h3>
           {crew
             ? crew.map(member => {
-                if (member.job === 'Writer') {
-                  return <p key={member.id}>{member.name}</p>;
+                if (member.job === 'Writer' || member.job === 'Teleplay') {
+                  return (
+                    <p key={`${member.id}-w`}>
+                      <Link to={`/person/${member.id}`} className="text-reset">
+                        {member.name}
+                      </Link>
+                    </p>
+                  );
                 }
                 return null;
               })

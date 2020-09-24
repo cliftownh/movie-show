@@ -30,6 +30,7 @@ const TvSeasonDetail = props => {
           </h1>
           <img
             src={`https://image.tmdb.org/t/p/w342${poster_path}`}
+            className="rounded"
             alt={name}
           />
 
