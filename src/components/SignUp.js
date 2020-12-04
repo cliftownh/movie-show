@@ -19,7 +19,7 @@ const SignUp = props => {
   const handleCancel = () => history.push('/');
 
   return (
-    <div className="container login-form">
+    <div className="container login-form rounded">
       <form onSubmit={handleSubmit}>
         <div className="form-group row">
           <label htmlFor="email-signup" className="col-sm-2 col-form-label">

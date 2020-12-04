@@ -158,6 +158,10 @@ label,
   border-color: #4e4e4e;
 }
 
+.modal-backdrop {
+  z-index: -1;
+}
+
 .nav-link:hover {
   cursor: pointer;
 }
