@@ -114,7 +114,7 @@ const PersonDetail = props => {
         </div>
       ) : (
         <div className="container">
-          <header className="zoom-me">
+          <header>
             <img
               src={`https://image.tmdb.org/t/p/w1280${backdrop}`}
               className="banner-img"
@@ -124,7 +124,7 @@ const PersonDetail = props => {
 
           <div className="main-detail bg-dark rounded">
             <div className="contained">
-              <h1 className="title-text">
+              <h1>
                 <strong>{name}</strong>
               </h1>
               {profile_path !== null ? (

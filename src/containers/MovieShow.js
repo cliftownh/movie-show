@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Layout from '../components/Layout';
-import Home from '../components/Home';
+import HomeNew from '../components/HomeNew';
 import Login from '../components/Login';
 import SignUp from '../components/SignUp';
 import MovieDetail from '../components/Details/MovieDetail';
@@ -57,7 +57,7 @@ const MovieShow = props => {
         </Route>
 
         <Route exact path="/">
-          <Home />
+          <HomeNew />
         </Route>
       </Switch>
     </Layout>

@@ -43,7 +43,7 @@ const MovieDetail = props => {
         </div>
       ) : (
         <div className="container">
-          <header className="zoom-me">
+          <header>
             <img
               src={`https://image.tmdb.org/t/p/w1280${backdrop_path}`}
               className="banner-img"
@@ -53,7 +53,7 @@ const MovieDetail = props => {
 
           <div className="main-detail bg-dark rounded">
             <div className="contained">
-              <h1 className="title-text">
+              <h1>
                 <strong>{title}</strong>
                 {release_date ? (
                   <small className="release-date">

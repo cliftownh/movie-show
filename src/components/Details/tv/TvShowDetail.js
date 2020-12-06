@@ -42,7 +42,7 @@ const TvShowDetail = props => {
         </div>
       ) : (
         <div className="container">
-          <header className="zoom-me">
+          <header>
             <img
               src={`https://image.tmdb.org/t/p/w1280${backdrop_path}`}
               className="banner-img"
