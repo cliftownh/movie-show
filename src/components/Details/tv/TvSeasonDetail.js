@@ -9,11 +9,33 @@ const keyURL = `?api_key=${tmdbKey}`;
 const TvSeasonDetail = props => {
   const { id, seasonNum } = useParams();
 
-  const detURL = base_url + id + `/season/${seasonNum}` + keyURL;
+  const detURL = base_url + id + keyURL;
 
   const [{ data, isLoading, isError }] = useAPI(detURL, {});
 
-  const { name, poster_path, episodes } = data;
+  const [{ data: show }] = useAPI(base_url + id + `?api_key=${tmdbKey}`, {});
+
+  const { name, poster_path, seasons } = data;
+
+  let thisSeason,
+    seasonPoster,
+    episodes = [];
+
+  if (seasons) {
+    thisSeason = seasons.find(
+      season => season.season_number.toString() === seasonNum
+    );
+
+    if (thisSeason) {
+      if (thisSeason.poster_path) {
+        seasonPoster = thisSeason.poster_path;
+      }
+    }
+
+    for (let i = 1; i <= thisSeason.episode_count; i++) {
+      episodes.push(i);
+    }
+  }
 
   return (
     <Fragment>
@@ -25,36 +47,58 @@ const TvSeasonDetail = props => {
         </div>
       ) : (
         <div className="container">
-          <h1>
-            <strong>{name}</strong>
-          </h1>
-          <img
-            src={`https://image.tmdb.org/t/p/w342${poster_path}`}
-            className="rounded"
-            alt={name}
-          />
+          <header>
+            <img
+              src={`https://image.tmdb.org/t/p/original${show.backdrop_path}`}
+              className="banner-img"
+              alt={name}
+            />
+          </header>
 
-          <div>
-            <p>
-              <strong>Episodes: </strong>
-            </p>
+          <div className="main-detail bg-dark rounded">
+            <div className="contained">
+              <h1>
+                <strong>
+                  <Link to={`/tv/${id}`} className="text-reset">
+                    {name}
+                  </Link>
+                  {`: Season ${seasonNum}`}
+                </strong>
+              </h1>
+              {seasonPoster ? (
+                <img
+                  src={`https://image.tmdb.org/t/p/w342${seasonPoster}`}
+                  className="rounded"
+                  alt={`Season ${seasonNum}`}
+                />
+              ) : (
+                <img
+                  src={`https://image.tmdb.org/t/p/w342${poster_path}`}
+                  className="rounded"
+                  alt={`Season ${seasonNum}`}
+                />
+              )}
 
-            {episodes
-              ? episodes.map(episode => {
-                  if (episode.episode_number > 0) {
-                    return (
-                      <Link
-                        to={`/tv/${id}/season/${seasonNum}/episode/${episode.episode_number}`}
-                        key={`ep${episode.episode_number}`}
-                        className="link-color"
-                      >
-                        {episode.episode_number + ' '}
-                      </Link>
-                    );
-                  }
-                  return null;
-                })
-              : null}
+              <div>
+                <p>
+                  <strong>Episodes: </strong>
+                </p>
+
+                {episodes
+                  ? episodes.map(episode => {
+                      return (
+                        <Link
+                          to={`/tv/${id}/season/${seasonNum}/episode/${episode}`}
+                          key={`ep${episode}`}
+                          className="link-color"
+                        >
+                          {episode + ' '}
+                        </Link>
+                      );
+                    })
+                  : null}
+              </div>
+            </div>
           </div>
         </div>
       )}
